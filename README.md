@@ -1,2 +1,2 @@
 # landing
-Landing for ildar.in
+Landing for www.ildar.in
