@@ -31,7 +31,7 @@ function getCurrentLocalization() {
         'Write your question or request',
         'Enter your message:',
         'Click to send!',
-        '(Optional) Email to response:',
+        'Email to response (Optional):',
         'Accepted!',
       )
     },
@@ -48,7 +48,7 @@ function createLocalization(
   formTitle = 'Напишите Ваш вопрос или пожелание!',
   formMessage = 'Введите сообщение:',
   formSend = 'Нажмите, чтобы отправить!',
-  formEmail = '(Необязательно) Почта для ответа:',
+  formEmail = 'Почта для ответа (Необязательно):',
   onSucess = 'Принято!'
 ) {
   return {
