@@ -1,71 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-8NXLSKGSYJ"></script>
-	<script>
-  	window.dataLayer = window.dataLayer || [];
-  	function gtag(){dataLayer.push(arguments);}
-  	gtag('js', new Date());
-  	gtag('config', 'G-8NXLSKGSYJ');
-	</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ildar.in</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
-<style>
-.links img{
-width: 16px;
-height:16px;
-margin-right: 8px;
-}
-.links li{
-height:20px;
-width:400px;
-}
-.links a{
-font-size:14pt;
-transition: all 0.1s cubic-bezier(0, -0.7, 0.5, 1);
-}
-.links a:hover{
-font-size:17pt;
-transition: all 0.3s cubic-bezier(.0, 3, 0.6, 1);
-}
-html{
-min-height: 100%;
-}
-body{
-margin:0px;
-padding:0px;
-background:linear-gradient(180deg, #fff114, #ffffa0 25%);
-}
-main{
-padding:35px;
-}
-</style>
-  </head>
-  <body>
-    <main>
-        <h1><img src="./favicon.ico" /> ildar.in website</h1>  
-	<p>Contact email: <a href="mailto:reply@ildar.in">reply@ildar.in</a></p>
-	<h2>Links</h2>
-<ul class="links">
-<li>
-<p><a href="https://ildar-in.itch.io/"><img src="https://ildar-in.itch.io/favicon.ico" />ildar-in Itch.io</a></p>
-</li>
-<li>
-<p><a href="https://www.reddit.com/user/ildar-in"><img src="https://www.reddit.com/favicon.ico"/>ildar-in Reddit</a></p>
-</li>
-<li>
-<p><a href="https://github.com/ildar-in"><img src="https://github.com/favicon.ico"/>ildar-in GitHub</a></p>
-</li>
-<li>
-<p><a href="https://www.youtube.com/channel/UCDL2ps_HVhNnRzmuB1CVDJQ"><img src="https://www.youtube.com/favicon.ico"/>ildarin YouTube</a></p>
-</li>
-</ul>
-    </main>
-	<script src="index.js"></script>
-  </body>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ildar.in</title>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <title>www.ildar.in</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8NXLSKGSYJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-8NXLSKGSYJ');
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
+  <link href="assets/bootstrap.min.css" rel="stylesheet">
+  <script src="assets/script.js"></script>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="navbar-nav">
+        <a id="nav-brand" class="navbar-brand" href="#">
+          <img src="favicon.ico" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
+          ILDAR.IN</a>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://ildar-in.itch.io/">
+              <img width="18" height="18" src="https://ildar-in.itch.io/favicon.ico">
+              Itch.io</a>
+          </li>
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://www.reddit.com/user/ildar-in">
+              <img width="18" height="18" style="box-shadow: unset 0 0 2px 2px #cec80f;"
+                src="https://www.reddit.com/favicon.ico">
+              Reddit</a>
+          </li>
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://github.com/ildar-in">
+              <img width="18" height="18" style="background-color: #cec80f;" src="https://github.com/favicon.ico">
+              GitHub</a>
+          </li>
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://www.youtube.com/channel/UCDL2ps_HVhNnRzmuB1CVDJQ">
+              <img width="18" height="18" src="https://www.youtube.com/favicon.ico">
+              YouTube</a>
+          </li>
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://habr.com/ru/users/ildarin/">
+              <img width="18" height="18" src="https://assets.habr.com/habr-web/img/favicons/favicon-32.png">
+              Habr</a>
+          </li>
+          <li class="nav-item">
+            <a target="_blank" class="nav-link" href="https://vc.ru/u/1171861-ildarin">
+              <img width="18" height="18" src="https://vc.ru/static/build/vc.ru/favicons/favicon.ico">
+              VC</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-item dropdown">
+        <button class="btn btn-dark" data-bs-toggle="dropdown">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+          <li><a id="menu-1" class="dropdown-item disabled" href="#">
+              Action</a></li>
+          <li><a id="menu-2" class="dropdown-item disabled" href="#">
+              Another action</a></li>
+          <li><a id="menu-3" class="dropdown-item disabled" href="#">
+              Something else here</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div hidden="true" id="form-success" class="container mt-4">
+    <h1 id="form-success-message">Successed</h1>
+  </div>
+  <div hidden="true" id="form-container" class="container mt-4">
+    <h1 id="form-title">Feedback Form</h1>
+    <form id="feedbackForm">
+      <div class="mb-3">
+        <label id="form-message" for="message">Message</label>
+        <textarea class="form-control" id="message" rows="5" maxlength="1000" required></textarea>
+      </div>
+      <div class="mb-3">
+        <label id="form-email" for="email">Email</label>
+        <input type="email" class="form-control" id="email">
+      </div>
+      <button id="form-send" type="submit" class="btn btn-warning">Submit</button>
+    </form>
+    <div id="response"></div>
+  </div>
+  <script src="assets/cdn.jsdelivr.net_npm_@popperjs_core@2.9.2_dist_umd_popper.min.js"></script>
+  <script src="assets/bootstrap.min.js"></script>
+</body>
+
 </html>
