@@ -1,19 +1,19 @@
 function initRelax68() {
     const sounds = [
-        createSound('🐥', 'birds-1.mp3'),
-        createSound('🐥', 'birds-2.wav'),
-        createSound('🌨', 'rain-1.mp3'),
-        createSound('🌨', 'rain-2.mp3'),
-        createSound('🔥', 'campfire-1.mp3'),
-        createSound('🌊', 'ocean-1.mp3'),
-        createSound('🌊', 'ocean-2.mp3'),
-        createSound('🏞', 'river-1.mp3'),
-        createSound('💧', 'water-1.mp3'),
-        createSound('💧', 'water-2.mp3'),
-        createSound('🎼', 'music-1-mantra.mp3'),
-        createSound('🎼', 'music-2.mp3'),
-        createSound('🎼', 'music-3.mp3'),
-
+        createSound('🐥1', 'birds-1.mp3'),
+        createSound('🐥2', 'birds-2.wav'),
+        createSound('🌨1', 'rain-1.mp3'),
+        createSound('🌨2', 'rain-2.mp3'),
+        createSound('🔥1', 'campfire-1.mp3'),
+        createSound('🌊1', 'ocean-1.mp3'),
+        createSound('🌊2', 'ocean-2.mp3'),
+        createSound('🏞1', 'river-1.mp3'),
+        createSound('💧1', 'water-1.mp3'),
+        createSound('💧2', 'water-2.mp3'),
+        createSound('🎼1', 'music-1-mantra.mp3'),
+        createSound('🎼2', 'music-2.mp3'),
+        createSound('🎼3', 'music-3.mp3'),
+        createSound('🎼4', 'music-4.mp3'),
     ]
     return sounds
 }
@@ -30,6 +30,8 @@ function createSoundElements(sounds = initRelax68()) {
     const elements = []
     const div = document.createElement('div')
     div.style.display = 'flex'
+    div.style.flexDirection = 'row'
+    div.style.flexWrap = 'wrap'
     div.style.justifyContent = 'space-evenly'
     div.classList.add('navbar-nav')
     for (const sound of sounds) {
