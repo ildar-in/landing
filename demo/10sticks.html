@@ -1,0 +1,10 @@
+<script>
+let sticks=10
+let player=1
+while(sticks>0){
+let take = prompt('Ходит игрок '+player+'. Осталось '+sticks+'. Сколько палочек вы берете?')
+sticks-=take
+player=player===1?2:1
+}
+alert('Победил игрок '+player)
+</script>
