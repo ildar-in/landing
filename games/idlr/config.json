@@ -1,4 +1,6 @@
 {
+  "XProj":"64fec2f077d94dde0a85",
   "FeedbackPostUrl":"https://cloud.appwrite.io/v1/databases/64fec34e9cfd3a086b78/collections/661c09580dd19166acd4/documents",
-  "XProj":"64fec2f077d94dde0a85"
+  "LogPostUrl":"https://cloud.appwrite.io/v1/databases/64fec34e9cfd3a086b78/collections/662a4772b76f9e3b9fee/documents",
+  "LogTimeoutSeconds": 300,
 }
