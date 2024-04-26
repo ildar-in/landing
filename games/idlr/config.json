@@ -4,5 +4,5 @@
   "LogPostUrl":"https://cloud.appwrite.io/v1/databases/64fec34e9cfd3a086b78/collections/662a4772b76f9e3b9fee/documents",
   "LogTimeoutSeconds": 300,
   "ProgressPostUrl":"https://cloud.appwrite.io/v1/databases/64fec34e9cfd3a086b78/collections/662b232e6743aef9c9e7/documents",
-  "ProgressTimeoutSeconds": 60
+  "ProgressTimeoutSeconds": 300
 }
