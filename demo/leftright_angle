@@ -1,0 +1,6 @@
+<script>
+const a = prompt('a')
+const b = prompt('b')
+const closestRotation = 1
+alert('closestRotation='+closestRotation)
+</script>
