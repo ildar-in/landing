@@ -2,6 +2,6 @@
   const a = prompt('a')
   const b = prompt('b')
   const diff = (a-b)%360
-  const closestRotation = (diff<0 && diff>-180)?-1:1
+  const closestRotation = (diff>0 && diff<180)?-1:1
   alert('closestRotation='+closestRotation)
 </script>
