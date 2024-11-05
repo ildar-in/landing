@@ -132,7 +132,7 @@ return {
 //----------------------------------------
 function initfight(gui, app, bg, cp, pts, wvc, ens, obj){try{
 
-const winui=initwinui(gui.bggui,app.screen.width,app.screen.height)
+//const winui=initwinui(gui.bggui,app.screen.width,app.screen.height)
 
 const fightbg=initfightbg(spbg,bg,app.screen)
 const textmo=gui.addtext(50,0,'0')
@@ -168,7 +168,7 @@ const ticker = PIXI.Ticker.shared
 ticker.start()
 ticker.add((t)=>{try{
 
-winui.update(t)
+//winui.update(t)
 
 fightbg.update(t)
 wvc.update(t)
