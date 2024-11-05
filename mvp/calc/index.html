@@ -1,0 +1,96 @@
+<!-- <body></body>
+<script src="script.js"></script>
+<script src="output.js"></script> -->
+
+
+<head>
+    <title>Percent caclulator</title>
+</head>
+<body>
+
+    <table>
+        <tr>
+    <td>
+        <p>Initial value</p>
+      <input id="input1" type="number" value="1000"/>
+    </td>
+    <td>
+        <p>Percent</p>
+      <input id="input2" type="number"  value="0.3"/>
+    </td>
+    <td>
+        <p>Periods</p>
+      <input id="input3" type="number"  value="15"/>
+    </td>
+</tr>
+<tr>
+    <td>
+    <input id="buttonres" type="button" value="Get result"/>
+</td>
+</tr>
+</table>
+    
+    <table id="result"></table>
+
+
+<script>
+    
+    document.getElementById('buttonres').addEventListener('click', e=>{
+
+        const res = document.getElementById('result')
+        res.innerHTML=''
+
+        function addRows(i, val){
+        const valres = document.createElement('tr')
+            const valres1 = document.createElement('td')
+            valres1.innerText=i
+
+            const valres2 = document.createElement('td')
+
+            const val1 = document.createElement('span')
+            valres2.appendChild(val1)
+            const val2 = document.createElement('span')
+            val2.style.fontSize='64%'
+            valres2.appendChild(val2)
+
+            val1.innerText= numberWithCommas(truncate(val))
+            val2.innerText=numberWithCommas(nozero(val%1))
+
+            val1.classList.add('sep')
+
+            valres.appendChild(valres1)
+            valres.appendChild(valres2)
+            res.appendChild(valres)
+    }
+
+        let val = Number(document.getElementById('input1').value)
+        const percent = Number(document.getElementById('input2').value)
+        const periods = Number(document.getElementById('input3').value)
+
+        let sum=0
+        addRows(0, val)
+        for(let i=0;i<periods;i++){
+            
+            val+= val * percent
+            sum+=val
+            addRows(i+1, val)
+        }
+        
+        addRows('sum', sum)
+    })
+
+    function nozero(value=''){
+        const str =(value+'')
+        return value===0 ? '':'.'+ str.substring(2,6)
+    }
+    function truncate(value)
+    {
+        return value|0
+    }
+    function numberWithCommas(x) {
+        return x
+        // return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+  
+</script>
+</body>
