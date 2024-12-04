@@ -318,7 +318,7 @@ function createEffect(x,y,w,h){
 }
 
 function createDamageNumber(x,y,text){
-    const w=0,h=100
+    const w=0,h=0
     const effectHtml = createDiv(document.body,x-w/2,y-h/2,w,h,tag='div')
     effectHtml.style.userSelect='none'
     effectHtml.style.backgroundSize='contain'
