@@ -10,6 +10,7 @@ const dt = 1000/fps
 const allBlueprints = getBlueprints()
 let currentBlueprint = allBlueprints[0]
 const score = { missing:0, incorrect:0 }
+let screenShake = 5
 
 const blocks = []
 for(let i=0;i<w;i++){
@@ -54,6 +55,23 @@ const attackSize = 40
 
 const charHtml = createDiv(document.body,char.x,char.y,char.w,char.h,tag='div')
 
+document.body.style.position='absolute'
+document.body.style.top='0'
+document.body.style.left='0'
+document.body.style.margin='0'
+
+setInterval(()=>{
+    if(screenShake>0.1){
+        document.body.style.top=Math.random()*screenShake
+        document.body.style.left=Math.random()*screenShake
+        screenShake*=0.8
+    }else{
+        screenShake=0
+        document.body.style.top=0
+        document.body.style.left=0
+    }
+}, dt)
+
 setInterval(()=>{
     if(char.isFlip){
         charHtml.style.transform='scaleX(-1)'
@@ -64,6 +82,7 @@ setInterval(()=>{
 
 document.body.addEventListener('keyup',e=>{
     if(e.code === 'KeyR'){
+        screenShake=10
         resetSculpture()
     }
     if(e.code === 'KeyB'){
@@ -107,6 +126,7 @@ document.body.addEventListener('mousedown',e=>{
         }
     })
     if(damagedBlocks.length>0){
+        screenShake=2
         playAudio('content/audio/26_sword_hit_1.wav', 0.3)
     }
 
@@ -128,7 +148,6 @@ document.body.addEventListener('mousedown',e=>{
 
 let gravity = 1
 setInterval(()=>{
-
     if(pressedKeys['KeyA']){
         char.isFlip=true
         if(!getCharacterBlocked(-char.speed, 0)){
@@ -167,7 +186,7 @@ setInterval(()=>{
     charHtml.style.backgroundSize='contain'
 }, dt)
 
-//---------------
+//---------------------------------------------------------------------------------------
 
 function calculateScore(){
     score.missing = 0
@@ -263,8 +282,6 @@ function updateBlockView(i,j){
         blockView.blockHtml.style.border='none'
         blockView.blockHtml.style.zIndex=-1
     }
-    
-
 }
 
 /**
