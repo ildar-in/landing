@@ -114,12 +114,15 @@ window.addEventListener('mousedown',e=>{
     else if(Math.random()<=0.66){playAudio('content/audio/17_orc_atk_sword_2.wav', 0.3)}
     else {playAudio('content/audio/17_orc_atk_sword_3.wav', 0.3)}
 
-    const damage = 25
+    const damageBase = 25
+    const damageRandom = 25
     let damagedBlocks=[]
     getAllBlocks(blocks).forEach(b=>{
         if(b.value<=0){return}
         const distance = Math.sqrt((b.x-x)*(b.x-x) + (b.y-y)*(b.y-y))
         if(distance<attackSize){
+            const damage = Math.round(damageBase + Math.random()*damageRandom)
+
             b.value -= damage
             if(b.value<=0){b.value=0}
             updateBlockView(b.i,b.j)
