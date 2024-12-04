@@ -114,21 +114,24 @@ window.addEventListener('mousedown',e=>{
     else if(Math.random()<=0.66){playAudio('content/audio/17_orc_atk_sword_2.wav', 0.3)}
     else {playAudio('content/audio/17_orc_atk_sword_3.wav', 0.3)}
 
+    const damage = 25
     let damagedBlocks=[]
     getAllBlocks(blocks).forEach(b=>{
         if(b.value<=0){return}
         const distance = Math.sqrt((b.x-x)*(b.x-x) + (b.y-y)*(b.y-y))
         if(distance<attackSize){
-            b.value -= 25
+            b.value -= damage
             if(b.value<=0){b.value=0}
             updateBlockView(b.i,b.j)
             damagedBlocks.push(b)
+            createDamageNumber(b.x,b.y,damage)
         }
     })
     if(damagedBlocks.length>0){
         screenShake=2
         playAudio('content/audio/26_sword_hit_1.wav', 0.3)
     }
+
 
     calculateScore()
     //const markeds = []
@@ -312,6 +315,33 @@ function createEffect(x,y,w,h){
     setTimeout(()=>{
         document.body.removeChild(effectHtml)
     }, 500)
+}
+
+function createDamageNumber(x,y,text){
+    const w=0,h=100
+    const effectHtml = createDiv(document.body,x-w/2,y-h/2,w,h,tag='div')
+    effectHtml.style.userSelect='none'
+    effectHtml.style.backgroundSize='contain'
+    effectHtml.innerText = text
+    effectHtml.style.zIndex = 2
+    effectHtml.style.textAlign='center'
+    effectHtml.style.color='#ffffff'
+    const dpos = [Math.random()*2+1,Math.random()-3]
+    let number = 16
+    const interval = setInterval(()=>{
+        effectHtml.style.left = x
+        effectHtml.style.top = y
+        x+=dpos[0]
+        y+=dpos[1]
+
+        //var txtClr = number.toString(16)
+        //while(txtClr.length<2){txtClr='0'+txtClr}
+        number-=0.5
+        if(number<0){ 
+            clearInterval(interval)
+            document.body.removeChild(effectHtml)
+         }
+    }, dt)
 }
 
 function playAudio(path,volume=1){
