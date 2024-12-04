@@ -80,7 +80,7 @@ setInterval(()=>{
     }
 }, dt)
 
-document.body.addEventListener('keyup',e=>{
+window.addEventListener('keyup',e=>{
     if(e.code === 'KeyR'){
         screenShake=10
         resetSculpture()
@@ -90,14 +90,14 @@ document.body.addEventListener('keyup',e=>{
     }
 })
 
-document.body.addEventListener('keydown',e=>{
+window.addEventListener('keydown',e=>{
     if(e.code === 'KeyW' && char.jumpAmount>0){
         char.dy=-25
         char.jumpAmount--
     }
 })
 
-document.body.addEventListener('mousedown',e=>{
+window.addEventListener('mousedown',e=>{
 
     let x = char.x
     let y = char.y
