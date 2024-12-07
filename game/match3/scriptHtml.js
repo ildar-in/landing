@@ -42,7 +42,7 @@ function initHtml(game=initGame()){
   //---------
 
   function initGridHtml(turnInfo){
-    
+
     if(game.player.hp<=0){
       textInfoHtml.innerText=`Game over`
       return
@@ -55,6 +55,17 @@ function initHtml(game=initGame()){
     textInfoHtml.innerText+=`\nEnemies info:\n`
     game.enemies.forEach(e=>{ if(e.hp<=0){return}
       textInfoHtml.innerText+=`hp:${e.hp}/${e.hpMax}; damage:${e.dmg}\n`
+    })
+
+    textInfoHtml.innerText+=`\nAbilities info:\n`
+    game.player.playerAbilities.forEach((a,i)=>{
+
+      let manaNeedText=''
+      a.manaNeed.forEach(mn=>{
+        manaNeedText+=elementIcons[mn.elementId]+mn.amount
+      })
+      textInfoHtml.innerText+= `${manaNeedText}| ${a.name};${a.description}\n`
+ 
     })
 
     const gridHtml = document.createElement('div')

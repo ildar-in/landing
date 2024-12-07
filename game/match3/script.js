@@ -11,7 +11,26 @@
         }
     }
 
-    const playerAbilities=[]//[createAbilityDamage({mpCost:[]})]
+    const enemies = [createEnemy(15,1),createEnemy(15,1),createEnemy(15,1)]
+    const events = new EventTarget()
+
+    const playerAbilities=[
+        createAbility([{elementId:0,amount:3}], ()=>{
+            const firstEnemyId = enemies.findIndex(e=>e.hp>0)
+                if(firstEnemyId===-1){return}
+                enemies[firstEnemyId].hp-=3
+        }, 'fireball', 'deal 3 damage to the first enemy'),
+        createAbility([{elementId:1,amount:3}], ()=>{
+            player.hp+=5
+        }, 'heal', 'heal yourself at 5'),
+        createAbility([{elementId:2,amount:5}], ()=>{
+            enemies.forEach(e=>{
+                if(e.hp>0){
+                    e.hp-=5
+                }
+            })
+        }, 'frost nova', 'deal 5 damage to all enemies'),
+    ]//[createAbilityDamage({mpCost:[]})]
 
     const player = {
         hp:100,hpMax:100, 
@@ -20,28 +39,28 @@
         playerAbilities
     }
     elems.forEach(i => { player.mp.push(createMana(i,0,10)) })
-    const enemies = [createEnemy(15,1),createEnemy(15,1),createEnemy(15,1)]
-
-    const events = new EventTarget()
     
     return {grid, gridClick, player, enemies, events}
     //-----------------------------------------------//-----------------------------------------------//-----------------------
 
     function turnEnd(turnInfo=createTurnInfo()){
-        console.log('turn end')
         turnInfo.mp.forEach(mp=>{
             player.mp[mp.elementId].value+=mp.amount
         })
 
-        for(let i=0;i<elems.length;i++){
-            if(player.mp[i].value>=3){
-                const firstEnemyId = enemies.findIndex(e=>e.hp>0)
-                if(firstEnemyId!==-1){
-                    player.mp[i].value-=3
-                    enemies[firstEnemyId].hp-=3
+        player.playerAbilities.forEach(a=>{
+            let isManaEnought=true
+            a.manaNeed.forEach(mn=>{
+                if(player.mp[mn.elementId].value<mn.amount){
+                    isManaEnought=false
                 }
-            }
-        }
+            })
+            if(!isManaEnought){return false}
+            a.manaNeed.forEach(mn=>{
+                player.mp[mn.elementId].value-=mn.amount
+            })
+            a.action()
+        })
 
         enemies.forEach(e=>{
             if(e.hp<=0){ return }
@@ -52,7 +71,12 @@
             if(mp.value>mp.valueMax){
                 mp.value=mp.valueMax
             }
+            if(mp.value<0){
+                mp.value=0
+            }
         })
+
+        if(player.hp>player.hpMax){player.hp=player.hpMax}
 
         events.dispatchEvent(new CustomEvent('turnEnd', {detail:turnInfo}))
     }
@@ -120,6 +144,14 @@
 
     function createMana(elementId=0,value=0,valueMax=10){
         return {elementId,value,valueMax}
+    }
+
+    //------------
+
+    function createAbility(manaNeed=[{elementId:0,amount:3}],action=()=>{return true},name='',description=''){
+        return {
+            manaNeed,action,name,description
+        }
     }
 }
 //-----------------
