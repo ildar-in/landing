@@ -33,7 +33,7 @@
     ]//[createAbilityDamage({mpCost:[]})]
 
     const player = {
-        hp:100,hpMax:100, 
+        hp:20,hpMax:20, 
         /** @type {Array<ReturnType<typeof createMana>>} */
         mp: [],
         playerAbilities
