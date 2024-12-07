@@ -64,7 +64,7 @@ function initHtml(game=initGame()){
       a.manaNeed.forEach(mn=>{
         manaNeedText+=elementIcons[mn.elementId]+mn.amount
       })
-      textInfoHtml.innerText+= `${manaNeedText}| ${a.name};${a.description}\n`
+      textInfoHtml.innerText+= `${manaNeedText}| ${a.name}: ${a.description}\n`
  
     })
 

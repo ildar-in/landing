@@ -20,10 +20,10 @@
                 if(firstEnemyId===-1){return}
                 enemies[firstEnemyId].hp-=3
         }, 'fireball', 'deal 3 damage to the first enemy'),
-        createAbility([{elementId:1,amount:3}], ()=>{
+        createAbility([{elementId:1,amount:3},{elementId:3,amount:2}], ()=>{
             player.hp+=5
-        }, 'heal', 'heal yourself at 5'),
-        createAbility([{elementId:2,amount:5}], ()=>{
+        }, 'healing', 'heal yourself at 5'),
+        createAbility([{elementId:2,amount:5},{elementId:4,amount:2}], ()=>{
             enemies.forEach(e=>{
                 if(e.hp>0){
                     e.hp-=5
