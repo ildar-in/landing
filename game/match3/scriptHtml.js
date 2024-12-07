@@ -25,8 +25,9 @@ function initHtml(game=initGame()){
     '#358600',
     '#39517a',
     '#ede9d0',
-    '#a5438d',
+    '#666666',
   ]
+  const elementIcons = ['🔴','🟢','🔵','⚪','⚫']
 
   const textInfoHtml = createDiv(document.body, 400, 10, 500, 300)
   
@@ -41,16 +42,15 @@ function initHtml(game=initGame()){
   //---------
 
   function initGridHtml(turnInfo){
-    console.log(turnInfo)
-
+    
     if(game.player.hp<=0){
       textInfoHtml.innerText=`Game over`
       return
     }
 
     textInfoHtml.innerText=`Player info: hp: ${game.player.hp}/${game.player.hpMax} mp:\n`
-    game.player.mp.forEach(mp=>{
-      textInfoHtml.innerText+=mp.value+'/'+mp.valueMax+'\n'
+    game.player.mp.forEach((mp,i)=>{
+      textInfoHtml.innerText+=elementIcons[mp.elementId]+ mp.value+'/'+mp.valueMax+'\n'
     })
     textInfoHtml.innerText+=`\nEnemies info:\n`
     game.enemies.forEach(e=>{ if(e.hp<=0){return}

@@ -15,7 +15,7 @@
 
     const player = {
         hp:100,hpMax:100, 
-        /** @type {Array<ReturnType<createMana>>} */
+        /** @type {Array<ReturnType<typeof createMana>>} */
         mp: [],
         playerAbilities
     }
@@ -28,18 +28,18 @@
     //-----------------------------------------------//-----------------------------------------------//-----------------------
 
     function turnEnd(turnInfo=createTurnInfo()){
-
+        console.log('turn end')
         turnInfo.mp.forEach(mp=>{
             player.mp[mp.elementId].value+=mp.amount
         })
 
         for(let i=0;i<elems.length;i++){
-            while(player.mp[i].value>=3){
+            if(player.mp[i].value>=3){
                 const firstEnemyId = enemies.findIndex(e=>e.hp>0)
-                if(firstEnemyId===-1){return}
+                if(firstEnemyId!==-1){
                     player.mp[i].value-=3
                     enemies[firstEnemyId].hp-=3
-                
+                }
             }
         }
 
@@ -48,6 +48,11 @@
             player.hp-=e.dmg
         })
         
+        player.mp.forEach(mp=>{
+            if(mp.value>mp.valueMax){
+                mp.value=mp.valueMax
+            }
+        })
 
         events.dispatchEvent(new CustomEvent('turnEnd', {detail:turnInfo}))
     }
