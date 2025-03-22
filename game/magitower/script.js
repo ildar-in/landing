@@ -4,11 +4,14 @@ document.body.style.left='0'
 document.body.style.margin='0'
 
 function createGrid(){
-  const w = 25, h=15, size=35, dt=250
+  const w = 25, h=15, size=35, dt=12, ticks = 5
   const collumns = []
   const cells = []
 
+  const gridDiv = createDiv(document.body, 10, 10, w*size, h*size)
+
   const grid = {
+    div:gridDiv,
     w,h,size,dt,
     //** @type {Array<Array<ReturnType<typeof createCell>>>} */
     col: collumns,
@@ -18,6 +21,7 @@ function createGrid(){
     structs:[],
     //** @type {Array<ReturnType<typeof createCharge>>} */
     charges:[],
+    onTick:[],
     //---
     destroyCharge
   }
@@ -58,25 +62,29 @@ function createGrid(){
     })
   })
 
+  let ticksElapsed = 0
   setInterval(()=>{
+    grid.onTick.forEach(h=>h(grid))
+    if(ticksElapsed++<ticks){
+      return
+    }else{
+      ticksElapsed = 0
+    }
+    grid.charges.forEach(ch=>{
+      const x = ch.r==1? ch.cell.i+1: ch.r==3? ch.cell.i-1: ch.cell.i
+      const y = ch.r==0? ch.cell.j-1: ch.r==2? ch.cell.j+1: ch.cell.j
+      if(x>=grid.w || y>=grid.h || x<0 || y<0){
+        ch.power=0
+      }else{
+        ch.cell = grid.col[x][y]
+        ch.update()
+      }
+    })
+    grid.charges.filter(ch=>ch.power<=0).forEach(ch=>{grid.destroyCharge(ch)})
     grid.structs.forEach(s=>{
       s.handlers.forEach(h=>{
         h.action(h.props, s, grid)
       })
-    })
-    grid.charges.forEach(c=>{
-      if(c.power<=0){
-        grid.destroyCharge(c)
-        return
-      }
-      const x = c.r==1? c.cell.i+1: c.r==3? c.cell.i-1: c.cell.i
-      const y = c.r==0? c.cell.j-1: c.r==2? c.cell.j+1: c.cell.j
-      if(x>=grid.w || y>=grid.h || x<0 || y<0){
-        grid.destroyCharge(c)
-      }else{
-        c.cell = grid.col[x][y]
-        c.updatePosition()
-      }
     })
   }, grid.dt)
 
@@ -89,7 +97,7 @@ function createGrid(){
 }
 
 function createCell(grid, i, j, size){
-  const div = createDiv(document.body, i*size, j*size, size, size)
+  const div = createDiv(grid.div, i*size, j*size, size, size)
   div.style.zIndex = 100
   div.style.border='1px solid #444444'
 
@@ -105,7 +113,7 @@ function createCell(grid, i, j, size){
 }
 
 function createStruct(cell, id, r=0) {
-  const div = createDiv(document.body, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
+  const div = createDiv(cell.grid.div, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
   div.style.backgroundImage='url(content/image/'+id+'.png)'
   div.style.backgroundSize='contain'
   div.style.imageRendering='pixelated'
@@ -141,7 +149,7 @@ function createHandler(id='', props={}, action=(props,struct, grid)=>{}){
 }
 
 function createCharge(/** @type {ReturnType<typeof createCell>} */cell, id, r=0, power=0){
-  const div = createDiv(document.body, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
+  const div = createDiv(cell.grid.div, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
   div.style.backgroundImage='url(content/image/'+id+'.png)'
   div.style.backgroundSize='contain'
   div.style.imageRendering='pixelated'
@@ -161,7 +169,7 @@ function createCharge(/** @type {ReturnType<typeof createCell>} */cell, id, r=0,
   const charge = {
     cell, div, divPower, id, r, power,
     //---
-    updatePosition: update
+    update
   }
   cell.grid.charges.push(charge)
   update()
@@ -179,8 +187,10 @@ function createCharge(/** @type {ReturnType<typeof createCell>} */cell, id, r=0,
 
 const grid = createGrid()
 const gridControl = { selCell:null }
+const battle = createBattle(document.body, grid.w*grid.size + 30, 10, 400, 400)
+grid.onTick.push((g)=>{battle.update()})
 
-const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 3}, (p,s,g)=>{
+const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 4}, (p,s,g)=>{
   if(p.timer==0){
     createCharge(s.cell, 'charge1', s.r, p.power)
   }
@@ -189,25 +199,33 @@ const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 3}, (
 })
 
 const consumerHandler = createHandler('consumer', {power: 1}, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
-  const charges = g.charges.filter((v)=>v.cell===s.cell)
-  if(charges.length)
-  {
-    charges.forEach(c=>{
-      c.power--
-    })
-  }
+  g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
+    ch.power--
+    battle.createBullet((s.r-1)*Math.PI/2 + (Math.random()-0.5)*Math.PI/2)
+  })
+})
+
+const redirectorHandler = createHandler('redirector', { }, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
+  g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
+    ch.r = s.r
+  })
 })
 
 const crystal = createStruct(grid.col[0][0], 'crystal', 1)
 const ballista1 = createStruct(grid.col[1][0], 'ballista', 1)
 const ballista2 = createStruct(grid.col[2][0], 'ballista', 2)
-const ballista3 = createStruct(grid.col[2][3], 'ballista', 2)
+const ballista3 = createStruct(grid.col[2][1], 'ballista', 3)
+const ballista4 = createStruct(grid.col[1][1], 'ballista', 0)
 
 crystal.addHandler(generatorHandler)
 ballista1.addHandler(consumerHandler)
+ballista1.addHandler(redirectorHandler)
 ballista2.addHandler(consumerHandler)
+ballista2.addHandler(redirectorHandler)
 ballista3.addHandler(consumerHandler)
-
+ballista3.addHandler(redirectorHandler)
+ballista4.addHandler(consumerHandler)
+ballista4.addHandler(redirectorHandler)
 //createCharge(grid.col[1][0], 'charge1', 1)
 
 console.log(grid)
