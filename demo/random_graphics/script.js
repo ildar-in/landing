@@ -1,5 +1,4 @@
-﻿//const canvas = document.getElementById('canvas')
-const canvas = document.createElement('canvas')
+﻿const canvas = document.createElement('canvas')
 canvas.width = 300
 canvas.height = 200
 canvas.style.height='100vh'
@@ -18,7 +17,7 @@ setInterval(() => {
 			if(t<50){
 				r = x*x
 				g = Math.atan(y/t)
-				b = t*x/y
+				b = t*x/y/255
 			} else if (t<100){
 				r = Math.tan(x/y+t)
 				g = Math.sin(y/t)
@@ -32,7 +31,6 @@ setInterval(() => {
 		}
 	}
 	t++
-	console.log(t)
 }, 13);
 
 function componentToHex(c) {
