@@ -16,7 +16,8 @@
         div,enemies:[],bullets:[], difficulty:25, 
         //---
         update,
-        createBullet
+        createBullet,
+        getClosestEnemy,
     }
 
     return battle
@@ -35,12 +36,11 @@
           e.div.style.left = w/2+e.x-size/2
           e.div.style.top = h/2+e.y-size/2
         }
-      })      
+      })
       removeEnemies.forEach(r=> {
         arrayRemove(battle.enemies,r)
         r.div.remove()
       })
-      //if(Math.random()<0.025 && battle.enemies.length<100){
       if(battle.enemies.length<battle.difficulty){
         createEnemy()
       }
@@ -51,12 +51,16 @@
           b.y+=Math.sin(b.a)*b.speed
           b.div.style.left = b.x+w/2-size/2
           b.div.style.top = b.y+h/2-size/2
-          battle.enemies.forEach(e=>{
-            if(Math.abs(e.x-b.x)+Math.abs(e.y-b.y)<size){
+          for(const e of battle.enemies){
+            if(Math.abs(e.x-b.x)+Math.abs(e.y-b.y)<b.scaledSize){
               e.hp-=b.damage
-              removeBullets.push(b)
+              b.penetrations--
+              if(b.penetrations<0){
+                removeBullets.push(b)
+                break
+              }
             }
-          })
+          }
         }else{
           removeBullets.push(b)
         }
@@ -66,17 +70,34 @@
         r.div.remove()
       })
     }
-    function createBullet(a,x=0,y=0,speed=1,damage=5){
-      const bulletDiv = createDiv(div,x+w/2-size/2,y+h/2-size/2,size,size)
+    function createBullet(a,x=0,y=0,speed=1,damage=5,penetrations=0,scale=1){
+      const scaledSize = size*scale
+      const bulletDiv = createDiv(div,x+w/2-size/2,y+h/2-size/2,scaledSize, scaledSize)
       bulletDiv.style.backgroundImage='url(content/image/arrow.png)'
       bulletDiv.style.backgroundSize='contain'
       bulletDiv.style.imageRendering='pixelated'
       bulletDiv.style.transform='rotate('+(a*57.2958+90)+'deg)'
       const bullet = {
-        div:bulletDiv, a, x, y, speed, damage
+        div:bulletDiv, a, x, y, speed, damage, penetrations, 
+        scaledSize:scaledSize,
       }
       battle.bullets.push(bullet)
       return bullet
+    }
+    function getClosestEnemy(){
+      if(battle.enemies.length==0){
+        return null
+      }
+      let min = Number.MAX_VALUE
+      let res = null
+      battle.enemies.forEach(e=>{
+        const distance = Math.abs(e.x)+Math.abs(e.y)
+        if(distance<min){
+          res = e
+          min = distance
+        }
+      })
+      return res
     }
     function createEnemy(hp=10){
       const a = Math.random()*Math.PI*2

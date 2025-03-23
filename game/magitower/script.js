@@ -39,7 +39,7 @@ function createGrid(){
   grid.cells.forEach(c=>{
     c.div.addEventListener('click',e=>{
       if(gridControl.selCell==c){
-        if(c.struct){
+        if(c.struct && c.struct.props.isRotatable){
           gridControl.selCell.struct.rotate(1)
         }
       }else{
@@ -112,7 +112,7 @@ function createCell(grid, i, j, size){
   return cell
 }
 
-function createStruct(cell, id, r=0) {
+function createStruct(cell, id, r=0, props={isRotatable:true}) {
   const div = createDiv(cell.grid.div, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
   div.style.backgroundImage='url(content/image/'+id+'.png)'
   div.style.backgroundSize='contain'
@@ -121,7 +121,7 @@ function createStruct(cell, id, r=0) {
   div.title = id
 
   const struct = {
-    id, r, div, cell,
+    id, r, div, cell, props,
     /** @type {Array<ReturnType<typeof createHandler>>} */
     handlers:[],
     //---
@@ -144,17 +144,23 @@ function createStruct(cell, id, r=0) {
 }
 
 function createHandler(id='', props={}, action=(props,struct, grid)=>{}){
-  const handler = {id,props,action}
-  return handler
+  //const handler = {id, props:Object.assign({}, props), action}
+  return (propsAdd={})=>{ 
+    const propsBase = Object.assign({}, props)
+    return {
+      id, props:Object.assign(propsBase, propsAdd), action
+    }
+  }
 }
 
 function createCharge(/** @type {ReturnType<typeof createCell>} */cell, id, r=0, power=0){
-  const div = createDiv(cell.grid.div, cell.i*grid.size, cell.j*grid.size, grid.size, grid.size)
+  const div = createDiv(cell.grid.div, cell.i*grid.size, cell.j*grid.size, grid.size/2, grid.size/2)
   div.style.backgroundImage='url(content/image/'+id+'.png)'
   div.style.backgroundSize='contain'
   div.style.imageRendering='pixelated'
   div.style.transform='rotate('+r*90+'deg)'
   div.style.zIndex = 50
+  div.style.opacity=0.5
   div.title = id
 
   const divPower = createDiv(div, 0, 0, grid.size, grid.size)
@@ -176,7 +182,7 @@ function createCharge(/** @type {ReturnType<typeof createCell>} */cell, id, r=0,
   return charge
   //---
   function update(){
-    div.setPosition(charge.cell.i*charge.cell.grid.size, charge.cell.j*charge.cell.grid.size)
+    div.setPosition(charge.cell.i*charge.cell.grid.size+charge.cell.grid.size/4, charge.cell.j*charge.cell.grid.size+charge.cell.grid.size/4)
     div.style.transform='rotate('+charge.r*90+'deg)'
     divPower.style.transform='rotate('+(-charge.r*90)+'deg)'
     divPower.innerText = charge.power
@@ -190,7 +196,12 @@ const gridControl = { selCell:null }
 const battle = createBattle(document.body, grid.w*grid.size + 30, 10, 400, 400)
 grid.onTick.push((g)=>{battle.update()})
 
-const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 4}, (p,s,g)=>{
+const getHandlerDirecton = (s)=> (s.r-1)*Math.PI/2 + (Math.random()-0.5)*Math.PI/2
+
+const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 4, isBlocker: true}, (p,s,g)=>{
+  if(p.isBlocker){
+    g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{ch.power=0})
+  }
   if(p.timer==0){
     createCharge(s.cell, 'charge1', s.r, p.power)
   }
@@ -200,33 +211,89 @@ const generatorHandler = createHandler('generator', {timer:0, cd:5, power: 4}, (
 
 const consumerHandler = createHandler('consumer', {power: 1}, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
   g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
-    ch.power--
-    battle.createBullet((s.r-1)*Math.PI/2 + (Math.random()-0.5)*Math.PI/2)
+    ch.power-=p.power
+    if(ch.power<0){ return }
+    battle.createBullet(getHandlerDirecton(s), 0, 0, 2, 5, 0, 0.75)
   })
 })
 
-const redirectorHandler = createHandler('redirector', { }, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
+const powerHandler = createHandler('power', {power: 1}, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
   g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
-    ch.r = s.r
+    ch.power+=p.power
+  })
+})
+
+const autofireHandler = createHandler('autofire', {power: 2}, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
+  g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
+    ch.power-=p.power
+    if(ch.power<0){ return }
+    const closest = battle.getClosestEnemy()    
+    if(closest){
+      battle.createBullet(closest.a + Math.PI, 0, 0, 10, 3, 0, 0.5)
+    }
+  })
+})
+
+const redirectorHandler = createHandler('redirector', { cd:1, cdElapsed:0, bandwidth:20, bandwidthElapsed:0 }, (p,s,/** @type {ReturnType<typeof createGrid>} g */g)=>{
+  s.div.innerText = p.bandwidthElapsed
+  s.div.style.color = '#ffffff'
+  s.div.style.textShadow = '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+  if(p.cdElapsed==p.cd){
+    p.cdElapsed=0
+    if(p.cdElapsed<=0){
+      p.bandwidthElapsed-=p.bandwidth
+      if(p.bandwidthElapsed<0){p.bandwidthElapsed=0}
+    }
+  }else{
+    p.cdElapsed++
+  }
+  g.charges.filter(ch=>ch.cell===s.cell).forEach(ch=>{
+    if( ch.r != s.r && p.bandwidthElapsed+ch.power<p.bandwidth){
+     ch.r = s.r
+     p.bandwidthElapsed+=ch.power
+    }
   })
 })
 
 const crystal = createStruct(grid.col[0][0], 'crystal', 1)
-const ballista1 = createStruct(grid.col[1][0], 'ballista', 1)
-const ballista2 = createStruct(grid.col[2][0], 'ballista', 2)
-const ballista3 = createStruct(grid.col[2][1], 'ballista', 3)
-const ballista4 = createStruct(grid.col[1][1], 'ballista', 0)
+const bowItem1 = createStruct(grid.col[2][0], 'bow', 0, {isRotatable:0})
+const bowItem2 = createStruct(grid.col[3][0], 'bow', 0, {isRotatable:0})
+const ballista1 = createStruct(grid.col[2][1], 'ballista', 1)
+const ballista2 = createStruct(grid.col[3][1], 'ballista', 2)
+const ballista3 = createStruct(grid.col[4][1], 'ballista', 3)
+const ballista4 = createStruct(grid.col[5][1], 'ballista', 0)
+const redirectorItem1 = createStruct(grid.col[2][2], 'redirector', 0)
+const redirectorItem2 = createStruct(grid.col[3][2], 'redirector', 0)
+const redirectorItem3 = createStruct(grid.col[4][2], 'redirector', 0)
+const redirectorItem4 = createStruct(grid.col[5][2], 'redirector', 0)
+const redirectorBItem1 = createStruct(grid.col[2][3], 'redirector2', 0)
+const redirectorBItem2 = createStruct(grid.col[3][3], 'redirector2', 0)
+const redirectorBItem3 = createStruct(grid.col[4][3], 'redirector2', 0)
+const redirectorBItem4 = createStruct(grid.col[5][3], 'redirector2', 0)
+const powerItem1 = createStruct(grid.col[2][4], 'power', 0, {isRotatable:0})
+const powerItem2 = createStruct(grid.col[3][4], 'power', 0, {isRotatable:0})
+const powerItem3 = createStruct(grid.col[4][4], 'power', 0, {isRotatable:0})
+const powerItem4 = createStruct(grid.col[5][4], 'power', 0, {isRotatable:0})
 
-crystal.addHandler(generatorHandler)
-ballista1.addHandler(consumerHandler)
-ballista1.addHandler(redirectorHandler)
-ballista2.addHandler(consumerHandler)
-ballista2.addHandler(redirectorHandler)
-ballista3.addHandler(consumerHandler)
-ballista3.addHandler(redirectorHandler)
-ballista4.addHandler(consumerHandler)
-ballista4.addHandler(redirectorHandler)
-//createCharge(grid.col[1][0], 'charge1', 1)
+crystal.addHandler(generatorHandler())
+bowItem1.addHandler(autofireHandler())
+bowItem2.addHandler(autofireHandler())
+ballista1.addHandler(consumerHandler())
+ballista2.addHandler(consumerHandler())
+ballista3.addHandler(consumerHandler())
+ballista4.addHandler(consumerHandler())
+redirectorItem1.addHandler(redirectorHandler())
+redirectorItem2.addHandler(redirectorHandler())
+redirectorItem3.addHandler(redirectorHandler())
+redirectorItem4.addHandler(redirectorHandler())
+redirectorBItem1.addHandler(redirectorHandler({bandwidth:40}))
+redirectorBItem2.addHandler(redirectorHandler({bandwidth:40}))
+redirectorBItem3.addHandler(redirectorHandler({bandwidth:40}))
+redirectorBItem4.addHandler(redirectorHandler({bandwidth:40}))
+powerItem1.addHandler(powerHandler())
+powerItem2.addHandler(powerHandler())
+powerItem3.addHandler(powerHandler())
+powerItem4.addHandler(powerHandler())
 
 console.log(grid)
 console.log(grid.col[0][0])
