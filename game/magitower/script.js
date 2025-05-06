@@ -4,7 +4,7 @@ document.body.style.left='0'
 document.body.style.margin='0'
 
 function createGrid(){
-  const w = 25, h=15, size=35, dt=12, ticks = 5
+  const w = 25, h=15, size=35, dt=35, ticks = 5
   const collumns = []
   const cells = []
 
@@ -255,7 +255,7 @@ const redirectorHandler = createHandler('redirector', { cd:1, cdElapsed:0, bandw
   })
 })
 
-const crystal = createStruct(grid.col[0][0], 'crystal', 1)
+const crystal = createStruct(grid.col[0][5], 'crystal', 1)
 const bowItem1 = createStruct(grid.col[2][0], 'bow', 0, {isRotatable:0})
 const bowItem2 = createStruct(grid.col[3][0], 'bow', 0, {isRotatable:0})
 const ballista1 = createStruct(grid.col[2][1], 'ballista', 1)
