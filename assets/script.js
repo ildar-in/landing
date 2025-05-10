@@ -14,14 +14,17 @@ window.addEventListener('load', e => {
   const formSuccessMessage = document.getElementById('form-success-message')
   formSuccessMessage.innerText = localization.onSucess
   formContainer.hidden = false
+  //formSend.disabled = '1'
   handleForm(formData => {
     const message = formData.get('email') + ':' + formData.get('message')
     saveData(message.substring(0, 1000), response => {
     formContainer.hidden = true
     formSuccess.hidden = false
+	//formSend.disabled = ''
   })
   })
 })
+
 function getCurrentLocalization() {
   const lang = window.navigator.language
   const localizations = [
