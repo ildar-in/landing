@@ -1,0 +1,224 @@
+<input id="aps" value="2" />
+<div id=div></div>
+<script>
+	div.innerText = '-+-+'
+	var elapsed = 0
+	var d = new Date()
+	setInterval(()=>{
+		let dif=new Date()-d
+		elapsed+=dif
+		d=new Date()
+		let cd = 1/aps.value*1000
+		if(elapsed>cd){
+			elapsed-=cd
+			div.innerText += '-'
+			if(div.innerText.length>30) { div.innerText='+'}
+		}
+	},1)
+
+let weapons = [
+{ dmg:1, aps:10 },
+{ dmg:2, aps:5 },
+{ dmg:10, aps:2 },
+{ dmg:10, aps:1 },
+{ dmg:20, aps:0.5 },
+{ dmg:40, aps:0.5 },
+]
+
+var wrathStart = 0
+var wrathCd = 1
+var wrathGrow = 3
+var wrathMax = 1
+var wrathWithdraw = 1
+var wrathMultipler = 0.15
+
+var timeTotal = 60
+
+for(var ixw=0; ixw<weapons.length; ixw++){
+
+	let weap = weapons[ixw]
+	let w = {
+		dmg:weap.dmg*2,
+		aps:weap.aps*2,
+	}
+
+	for(let wrath=10;wrath<=50;wrath+=40){
+		let wstacks = wrath * wrathStart
+		let wcd = 0
+		var damage = 0
+		var damageDef = 0
+		
+		var t = timeTotal
+		var dt = 1/w.aps
+
+		var wstacksMax = 0
+
+		while(t>0){
+			t-=dt
+
+			wcd+=dt
+			while(wcd>=wrathCd){ 
+				wcd-=wrathCd
+				wstacks+=wrathGrow
+			}
+			if(wstacks>wrath*wrathMax){
+				wstacks=wrath*wrathMax
+			}
+			if(wstacks>wstacksMax){ wstacksMax=wstacks }
+
+			damageDef+=w.dmg
+			damage+=w.dmg * (1+wstacks*wrathMultipler)
+
+			wstacks-=wrathWithdraw
+			if(wstacks<0){wstacks=0}
+
+		}
+
+		console.log(wrath,wstacksMax,weap,  Math.ceil(damageDef), Math.ceil(damage),   "|",Math.ceil(damage/timeTotal - damageDef/timeTotal), "|",  Math.ceil(100*damage/damageDef-100))
+
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+// 	var str=0,agi=0,int=0,
+// 		strb=0.05, agib=0.04, intb1=0.02, intb2=0.025
+// var levelsCount = 30
+
+// 	function getdps(s=str,a=agi,i=int, base = 1){
+// 		let dps = base * (1+s*strb) * (1+a*agib) * (1+i*intb1) * (1+i*intb2)
+// 		return dps
+// 	}//dps=100, 10% 200%; 110
+
+// 	var presets = [
+// 'sisisisisisisisisisisisisisisisisisisisisisisisisisisisisisi',
+// 'sasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa',
+// 'aiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiaiai',
+// 'isaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisaisa',
+// 'ssssssssssssssssssssssssssssssss','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','iiiiiiiiiiiiiiiiiiiiiiiiiiiiii',
+// //'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'sasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'iiiisasaiiisasasasasaiiiisasasasasasaiiiisasasasasasasasasasasasasasasasasa'
+// //'isiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisia'
+// //'iiiiiiisasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'iiiiiiiisasasasasasasasasasasasasasasasasasasa'
+// //'iiiiiiiissssssaaaaaa'//'iisisissiassaiasiiiaiasassaass'
+// 	]
+// 	for(var idx=0;idx<presets.length;idx++){
+// 		str=0
+// 		agi=0
+// 		int=0
+// var preset = presets[idx]
+
+// var hist=''
+// var lvl=0,exp=0,sdps=0
+// for(var t=0;t<levelsCount;t++){
+
+// 	exp+=1//+int*intb
+// 	while(exp>1){
+// 		exp--
+// 		lvl++
+
+// 		if(preset.length>0){
+// 			let pre=preset[0]
+// 			preset = preset.substring(1, preset.length)
+// 			if(pre=='s'){str++}
+// 			if(pre=='a'){agi++}
+// 			if(pre=='i'){int++}
+// 			hist+=pre
+// 		}else{
+// 			if(Math.random()<1/3){ 
+// 				str++
+// 				hist+='s'
+// 			}else{
+// 				if(Math.random()<1/2){
+// 					agi++
+// 					hist+='a'
+// 			}else{
+// 					int++
+// 					hist+='i'
+// 			}
+// 			}
+// 		}
+// 	}
+
+// 	//let dps = (1+str*strb)*(1+agi*agib)
+// 	let dps = getdps(str,agi,int)
+// 	sdps+=dps
+// 	//console.log(dps)
+// }
+// let dps = getdps(str,agi,int)
+// console.log(str,agi,int, '|', lvl, '|', dps,  '|', sdps, hist)
+// //console.log(sdps)
+// 	}
+
+</script>
+
+
+
+
+
+
+
+
+<script>
+// var str=0,agi=0,int=0,
+// 	strb=0.05, agib=0.05, intb=0.07
+
+// var preset = 
+// //'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'sasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa'
+// 'iiiiiiisasasasasasasasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'iiiisasaiiisasasasasaiiiisasasasasasaiiiisasasasasasasasasasasasasasasasasa'
+// //'isiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisiaisia'
+// //'iiiiiiisasasasasasasasasasasasasasasasasasasasasasasasa'
+// //'iiiiiiiisasasasasasasasasasasasasasasasasasasa'
+// //'iiiiiiiissssssaaaaaa'//'iisisissiassaiasiiiaiasassaass'
+// var hist=''
+// var lvl=0,exp=0,sdps=0
+// for(var t=0;t<30;t++){
+
+// 	exp+=1+int*intb
+// 	while(exp>1){
+// 		exp--
+// 		lvl++
+
+// 		if(preset.length>0){
+// 			let pre=preset[0]
+// 			preset = preset.substring(1, preset.length)
+// 			if(pre=='s'){str++}
+// 			if(pre=='a'){agi++}
+// 			if(pre=='i'){int++}
+// 			hist+=pre
+// 		}else{
+// 			if(Math.random()<1/3){ 
+// 				str++
+// 				hist+='s'
+// 			}else{
+// 				if(Math.random()<1/2){
+// 					agi++
+// 					hist+='a'
+// 			}else{
+// 					int++
+// 					hist+='i'
+// 			}
+// 			}
+// 		}
+// 	}
+
+// 	let dps = (1+str*strb)*(1+agi*agib)
+// 	sdps+=dps
+// 	console.log(dps)
+// }
+// let dps = (1+str*strb)*(1+agi*agib)
+// console.log(str,agi,int,'|',lvl,'|',dps,hist)
+// console.log(sdps)
+</script>
