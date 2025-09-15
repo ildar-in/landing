@@ -11,15 +11,19 @@ window.addEventListener('load', e => {
 	const center = getCenterOfScreen()
 	const screen = {w:600, h:400}
 
+	
 	const player = {
 		x:center.x, y:center.y,
 		tx:center.x, ty:center.y,
 		speed: speedUrlParam ==0 ? 1200 : speedUrlParam,
 		w:26, h:26,
-		hp: hpUrlParam==0? 1 : hpUrlParam,
+		hpMax: hpUrlParam==0? 1 : hpUrlParam,
 		cd:100,
-		cdElapsed:100
+		cdElapsed:100,
+		hp: 0,
 	}
+	player.hp = player.hpMax
+
 	var levelDone = 1
 	const levelDoneMax = 3
 
@@ -45,7 +49,7 @@ window.addEventListener('load', e => {
 	var keyPressed = initUpdateKeyboard()
 
 	setInterval(()=>{
-		guiDiv.innerText = 'HP: ' + player.hp + '\n' + 'Stage:'+levelDone+'/'+levelDoneMax
+		guiDiv.innerText = 'HP: ' + player.hp + '/'+  + player.hpMax + '\n' + 'Stage:'+levelDone+'/'+levelDoneMax
 		if(player.hp<=0 || gameStop){ return }
 
 		playerDiv.style.left = player.x - player.w/2
@@ -147,7 +151,8 @@ window.addEventListener('load', e => {
 		if(enemies.length===0){
 			if(levelDone>=levelDoneMax){
 				const winDiv = createDiv(center.x-screen.w/2, center.y-screen.h/2, screen.w, screen.h, '#0a0')
-				winDiv.innerText = new Date() - gameTimeStart
+				winDiv.innerText = new Date() - gameTimeStart + '\n' 
+					+ 'HP: ' + player.hp + '/'+  + player.hpMax + '\n' + 'Stage:'+levelDone+'/'+levelDoneMax
 				gameStop = 1
 			}
 			else
@@ -162,8 +167,8 @@ window.addEventListener('load', e => {
 	function createEnemies() {
 		enemies.push(createEnemy(center.x - screen.w / 2, center.y - screen.h / 2))
 		enemies.push(createEnemy(center.x + screen.w / 2, center.y + screen.h / 2))
-	enemies.push(createEnemy(center.x - screen.w / 2, center.y + screen.h / 2))
-	enemies.push(createEnemy(center.x + screen.w / 2, center.y - screen.h / 2))
+		enemies.push(createEnemy(center.x - screen.w / 2, center.y + screen.h / 2))
+		enemies.push(createEnemy(center.x + screen.w / 2, center.y - screen.h / 2))
 	}
 
 function createEnemy(x,y){
@@ -172,7 +177,7 @@ function createEnemy(x,y){
 	const size = getLen(0,0,w,h)/2
 	return {
 		x,y,w,h, 
-		hp:50,
+		hp:1,
 		isDead:false,
 		div,
 		cd:1, cdElapsed:1,
