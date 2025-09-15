@@ -1,5 +1,7 @@
 window.addEventListener('load', e => {
 
+	const gameTimeStart = new Date()
+
 	const urlParams = new URLSearchParams(window.location.search)
 	const speedUrlParam = new Number(urlParams.get("speed"))
 	const hpUrlParam = new Number(urlParams.get("hp"))
@@ -18,12 +20,13 @@ window.addEventListener('load', e => {
 		cd:100,
 		cdElapsed:100
 	}
+	var levelDone = 1
+	const levelDoneMax = 3
 
 	const bgDiv = createDiv(center.x-screen.w/2, center.y-screen.h/2, screen.w, screen.h, '#999')
 
 	const guiDiv = document.createElement('div')
 	document.body.appendChild(guiDiv)
-	guiDiv.innerText = 'HP: ' + player.hp
 
 	const mouseDiv = createDiv(0,0,30,30)
 	//mouseDiv.style.stroke = '1px solid #009A'
@@ -32,10 +35,8 @@ window.addEventListener('load', e => {
 	let enemies=[]
 	let bullets=[]
 
-	enemies.push(createEnemy(center.x-screen.w/2, center.y-screen.h/2))
-	enemies.push(createEnemy(center.x+screen.w/2, center.y+screen.h/2))
-	enemies.push(createEnemy(center.x-screen.w/2, center.y+screen.h/2))
-	enemies.push(createEnemy(center.x+screen.w/2, center.y-screen.h/2))
+	var gameStop = 0
+	createEnemies()
 
 	const playerDiv = createDiv(center.x,center.y,player.w,player.h,'#050')
 
@@ -44,7 +45,8 @@ window.addEventListener('load', e => {
 	var keyPressed = initUpdateKeyboard()
 
 	setInterval(()=>{
-		if(player.hp<=0){ return } else { guiDiv.innerText = 'HP: ' + player.hp }
+		guiDiv.innerText = 'HP: ' + player.hp + '\n' + 'Stage:'+levelDone+'/'+levelDoneMax
+		if(player.hp<=0 || gameStop){ return }
 
 		playerDiv.style.left = player.x - player.w/2
 		playerDiv.style.top = player.y- player.h/2
@@ -69,7 +71,7 @@ window.addEventListener('load', e => {
 				e.cdElapsed=e.cd
 				// bullets.push(createBullet(e.x,e.y,player.x,player.y, true, 500))
 				// bullets.push(createBullet(e.x,e.y,player.x,player.y, true, 500, 400, 66, 66))
-				bullets.push(createBullet(e.x,e.y,player.x + (Math.random()-0.5) * 100 ,player.y + (Math.random()-0.5) * 100, true, 500, 200, 66, 66))
+				bullets.push(createBullet(e.x,e.y,player.x + (Math.random()-0.5) * 100, player.y + (Math.random()-0.5) * 100, true, 500, 200, 66, 66))
 			}
 			if(e.hp<=0){
 				e.isDead = true
@@ -141,8 +143,28 @@ window.addEventListener('load', e => {
 		if(player.x > center.x+screen.w/2) { player.x = center.x+screen.w/2 }
 		if(player.y < center.y-screen.h/2) { player.y = center.y-screen.h/2 }
 		if(player.y > center.y+screen.h/2) { player.y = center.y+screen.h/2 }
-			
+		
+		if(enemies.length===0){
+			if(levelDone>=levelDoneMax){
+				const winDiv = createDiv(center.x-screen.w/2, center.y-screen.h/2, screen.w, screen.h, '#0a0')
+				winDiv.innerText = new Date() - gameTimeStart
+				gameStop = 1
+			}
+			else
+			{
+				createEnemies()
+				levelDone++
+			}
+		}
+
 	}, 13)
+
+	function createEnemies() {
+		enemies.push(createEnemy(center.x - screen.w / 2, center.y - screen.h / 2))
+		enemies.push(createEnemy(center.x + screen.w / 2, center.y + screen.h / 2))
+	enemies.push(createEnemy(center.x - screen.w / 2, center.y + screen.h / 2))
+	enemies.push(createEnemy(center.x + screen.w / 2, center.y - screen.h / 2))
+	}
 
 function createEnemy(x,y){
 	const w=26,h=26
