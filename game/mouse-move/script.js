@@ -177,7 +177,7 @@ function createEnemy(x,y){
 	const size = getLen(0,0,w,h)/2
 	return {
 		x,y,w,h, 
-		hp:1,
+		hp:50,
 		isDead:false,
 		div,
 		cd:1, cdElapsed:1,
