@@ -1,5 +1,9 @@
 window.addEventListener('load', e => {
 
+	const urlParams = new URLSearchParams(window.location.search)
+	const speedParam = new Number(urlParams.get("speed"))
+
+
 	const timeDelta = 13
 	const persec = timeDelta/1000
 	const center = getCenterOfScreen()
@@ -8,13 +12,14 @@ window.addEventListener('load', e => {
 	const player = {
 		x:center.x, y:center.y,
 		tx:center.x, ty:center.y,
-		// speed:800,
-		speed:600,
+		speed: speedParam ==0 ? 1200 : speedParam,
 		w:26, h:26,
-		hp:5,
+		hp:1,
 		cd:100,
 		cdElapsed:100
 	}
+
+	const bgDiv = createDiv(center.x-screen.w/2, center.y-screen.h/2, screen.w, screen.h, '#999')
 
 	const guiDiv = document.createElement('div')
 	document.body.appendChild(guiDiv)
@@ -35,6 +40,8 @@ window.addEventListener('load', e => {
 	const playerDiv = createDiv(center.x,center.y,player.w,player.h,'#050')
 
   initUpdateMouseMove(player, mouseDiv)
+	
+	var keyPressed = initUpdateKeyboard()
 
 	setInterval(()=>{
 		if(player.hp<=0){ return } else { guiDiv.innerText = 'HP: ' + player.hp }
@@ -54,12 +61,15 @@ window.addEventListener('load', e => {
 		enemies.forEach(e => {
 			e.div.style.left = e.x-e.w/2
 			e.div.style.top = e.y-e.h/2
+			e.div.innerText = e.hp
+			e.div.style.color = '#fff'
 			e.cdElapsed-=persec
 
 			if(e.cdElapsed<=0){
 				e.cdElapsed=e.cd
 				// bullets.push(createBullet(e.x,e.y,player.x,player.y, true, 500))
-				bullets.push(createBullet(e.x,e.y,player.x,player.y, true, 500, 400, 66, 66))
+				// bullets.push(createBullet(e.x,e.y,player.x,player.y, true, 500, 400, 66, 66))
+				bullets.push(createBullet(e.x,e.y,player.x + (Math.random()-0.5) * 100 ,player.y + (Math.random()-0.5) * 100, true, 500, 200, 66, 66))
 			}
 			if(e.hp<=0){
 				e.isDead = true
@@ -110,12 +120,29 @@ window.addEventListener('load', e => {
 			return true
 		})
 
+		if(keyPressed[0]){
+			player.ty = player.y - 10
+		}
+		if(keyPressed[2]){
+			player.ty = player.y + 10
+		}
+		if(keyPressed[1]){
+			player.tx = player.x - 10
+		}
+		if(keyPressed[3]){
+			player.tx = player.x + 10
+		}
+
 		const playerDiff = getDiffTowards(player.x, player.y, player.tx, player.ty, player.speed * persec)
 		player.x += playerDiff.x
 		player.y += playerDiff.y
 
+		if(player.x < center.x-screen.w/2) { player.x = center.x-screen.w/2 }
+		if(player.x > center.x+screen.w/2) { player.x = center.x+screen.w/2 }
+		if(player.y < center.y-screen.h/2) { player.y = center.y-screen.h/2 }
+		if(player.y > center.y+screen.h/2) { player.y = center.y+screen.h/2 }
+			
 	}, 13)
-
 
 function createEnemy(x,y){
 	const w=26,h=26
@@ -123,7 +150,7 @@ function createEnemy(x,y){
 	const size = getLen(0,0,w,h)/2
 	return {
 		x,y,w,h, 
-		hp:10,
+		hp:50,
 		isDead:false,
 		div,
 		cd:1, cdElapsed:1,
@@ -148,22 +175,20 @@ function createBullet(x, y, tx, ty, isEnemy, distance = 500, speed = 400, w = 22
 		size
 	}
 }
-})
 
-function createDiv(x=0,y=0,w=50,h=50,color='#33333366'){
-	const div = document.createElement('div')
-	div.style.width = w
-	div.style.height = h
-	div.style.position='absolute'
-	div.style.left = x
-	div.style.top = y
-	div.style.backgroundColor =  color
-	document.body.appendChild(div)
-	return div
-}
+	function createDiv(x=0,y=0,w=50,h=50,color='#33333366'){
+		const div = document.createElement('div')
+		div.style.width = w
+		div.style.height = h
+		div.style.position='absolute'
+		div.style.left = x
+		div.style.top = y
+		div.style.backgroundColor =  color
+		document.body.appendChild(div)
+		return div
+	}
 
-
-function initUpdateMouseMove(player, mouseDiv) {
+	function initUpdateMouseMove(player, mouseDiv) {
 	document.onmousemove = handleMouseMove
 	function handleMouseMove(event) {
 		var eventDoc, doc, body
@@ -187,7 +212,28 @@ function initUpdateMouseMove(player, mouseDiv) {
 		mouseDiv.style.left = event.pageX-15
 		mouseDiv.style.top = event.pageY-15
 	}
-}
+	}
+
+	function initUpdateKeyboard() {
+		var keyPressed = [0, 0, 0, 0]
+		document.addEventListener('keyup', e => {
+			['w', 'a', 's', 'd'].forEach((key, i) => {
+				if (e.key === key) {
+					keyPressed[i] = 0
+				}
+			})
+		})
+		document.addEventListener('keydown', e => {
+			['w', 'a', 's', 'd'].forEach((key, i) => {
+				if (e.key === key) {
+					keyPressed[i] = 1
+				}
+			})
+		})
+		return keyPressed
+	}
+
+})
 
 function getDiffTowards(startX, startY, targetX, targetY, movementDistance) {
 	let dx = targetX - startX;
