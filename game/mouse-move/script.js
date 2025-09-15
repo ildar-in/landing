@@ -216,16 +216,19 @@ function createBullet(x, y, tx, ty, isEnemy, distance = 500, speed = 400, w = 22
 
 	function initUpdateKeyboard() {
 		var keyPressed = [0, 0, 0, 0]
+		const codes = ['KeyW', 'KeyA', 'KeyS', 'KeyD']
 		document.addEventListener('keyup', e => {
-			['w', 'a', 's', 'd'].forEach((key, i) => {
-				if (e.key === key) {
+			codes.forEach((key, i) => {
+				if (e.code === key) {
 					keyPressed[i] = 0
 				}
 			})
 		})
 		document.addEventListener('keydown', e => {
-			['w', 'a', 's', 'd'].forEach((key, i) => {
-				if (e.key === key) {
+			console.log(e.code)
+			codes.forEach((key, i) => {
+				console.log(key)
+				if (e.code === key) {
 					keyPressed[i] = 1
 				}
 			})
