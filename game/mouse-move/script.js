@@ -1,8 +1,8 @@
 window.addEventListener('load', e => {
 
 	const urlParams = new URLSearchParams(window.location.search)
-	const speedParam = new Number(urlParams.get("speed"))
-
+	const speedUrlParam = new Number(urlParams.get("speed"))
+	const hpUrlParam = new Number(urlParams.get("hp"))
 
 	const timeDelta = 13
 	const persec = timeDelta/1000
@@ -12,9 +12,9 @@ window.addEventListener('load', e => {
 	const player = {
 		x:center.x, y:center.y,
 		tx:center.x, ty:center.y,
-		speed: speedParam ==0 ? 1200 : speedParam,
+		speed: speedUrlParam ==0 ? 1200 : speedUrlParam,
 		w:26, h:26,
-		hp:1,
+		hp: hpUrlParam==0? 1 : hpUrlParam,
 		cd:100,
 		cdElapsed:100
 	}
