@@ -71,6 +71,7 @@ window.addEventListener('load', e => {
 			+'\nEnemy attack speed: ' + player.EnemyAttackSpeed + '%'
 			+'\nEnemy bullet speed: ' + player.EnemyBulletSpeed + '%'
 			+'\nEnemy bullet size: ' + player.EnemyBulletSize + '%'
+			+ '\n\nElapsed time: '+ elapsedTime
 
 		if(player.hp<=0 || gameStop){ return }
 		elapsedTime++
