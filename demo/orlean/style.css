@@ -1,0 +1,10 @@
+#canvas{
+	border:1px black solid;
+	height:90.67vh;
+}
+
+.grabbable:active {
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
